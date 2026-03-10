@@ -1,10 +1,18 @@
 # CCC-Persistence-Skill
 
-**Claude Code Context Persistence Skill** - A skill for preserving conversation context across Claude Code sessions.
+**Claude Code Context Persistence Skill** — Explicit, inspectable, git-trackable context persistence for Claude Code sessions.
+
+> "Save context before you lose it; load context before you need it."
 
 ## Why This Exists
 
-Claude Code has built-in memory, but it's opaque. This skill provides **explicit, inspectable, git-trackable** context persistence that complements the built-in system.
+Claude Code has built-in memory, but it's opaque. This skill gives you **visible, git-tracked, searchable** session context you control.
+
+**Save cost** — No re-exploring codebases or re-reading files. Resume with focused context, fewer tokens spent rediscovering what you already knew.
+
+**Faster sessions** — Pre-prioritized files to review, documented decisions, clear next steps. Skip the "where were we?" overhead.
+
+**No context loss** — Save proactively before hitting limits. Key decisions and patterns survive across sessions.
 
 | Concern | Built-in Memory | This Skill |
 |---------|-----------------|------------|
