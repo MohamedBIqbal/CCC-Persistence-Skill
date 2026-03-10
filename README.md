@@ -90,17 +90,77 @@ your-project/
 - **Topic Tags**: Every context file has searchable tags
 - **Priority Levels**: High/medium/low for continuation decisions
 - **Quick Search**: Index supports search by topic or modified files
+- **Cross-File Search**: Find and combine context from multiple files
 - **Size Management**: Guidelines for splitting large context files
 - **Archival Policy**: Clear rules for when to archive/delete
 
+## Cross-File Context Search
+
+The index (`_index.md`) enables searching across all context files and combining them.
+
+### Example: Multi-Topic Resume
+
+You have context files from previous sessions:
+- `auth-refactor.md` (tags: auth, security)
+- `api-v2.md` (tags: api, auth)
+- `database-migration.md` (tags: database, schema)
+
+**Just tell Claude:**
+
+```
+"Load all context related to auth"
+→ Loads auth-refactor.md + api-v2.md (both tagged 'auth')
+
+"I'm working on src/auth.py, what context do we have?"
+→ Finds all context files that modified src/auth.py
+
+"Load context for auth and database work"
+→ Combines context from auth-refactor.md + database-migration.md
+```
+
+### Example: Linking Related Work
+
+When saving context, link related files:
+
+```markdown
+## Related Context Files
+- `api-v2.md` - Related API changes
+- `database-migration.md` - Schema changes this depends on
+```
+
+Then later: `"Load auth-refactor and its related context"`
+
 ## Example Commands
 
-When working with Claude Code, you can use natural language:
+**Saving:**
+```
+"Save context"
+"Save context with tags: auth, api, refactor"
+"Save context, this is high priority"
+```
 
-- "Save context" - Creates a context file for current session
-- "Load context for [topic]" - Loads relevant previous context
-- "Where were we?" - Triggers context lookup and summary
-- "Cleanup context" - Reviews and archives old context files
+**Loading:**
+```
+"Where were we?"
+"Load context for auth"
+"What context do we have for src/api.py?"
+"Load all high priority context"
+"Continue from yesterday's session"
+```
+
+**Combining:**
+```
+"Load context for both auth and caching"
+"Find all context related to the API refactor"
+"What sessions touched the database schema?"
+```
+
+**Managing:**
+```
+"List all context files"
+"Cleanup old context"
+"Archive context older than 7 days"
+```
 
 ## Files Included
 
