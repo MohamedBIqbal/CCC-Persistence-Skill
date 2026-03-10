@@ -1,0 +1,16 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Keep the example but ignore real context files
+# Uncomment these lines in your project:
+# .claude/context/active/session-*.md
+# !.claude/context/active/session-example.md
+# .claude/context/archive/
