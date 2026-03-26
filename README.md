@@ -12,7 +12,7 @@ Claude Code has built-in memory, but it's opaque. This skill gives you **visible
 
 **Faster sessions** — Pre-prioritized files to review, documented decisions, clear next steps. Skip the "where were we?" overhead.
 
-**No context loss** — Save proactively before hitting limits. Key decisions and patterns survive across sessions.
+**No context loss** — Save proactively before hitting limits. Key decisions, active plans, and patterns survive across sessions.
 
 | Concern | Built-in Memory | This Skill |
 |---------|-----------------|------------|
@@ -21,41 +21,41 @@ Claude Code has built-in memory, but it's opaque. This skill gives you **visible
 | Versioning | None | Git-tracked |
 | Searchability | Limited | Topic tags, file index |
 
+## What's New in v2
+
+- **Active Plans preservation** — `.claude/plans/*.md` files are ephemeral (Claude Code wipes them between sessions). The skill now captures plan content into context files so plans survive session restarts.
+- **Proper SKILL.md format** — Follows Anthropic's official skill conventions with YAML frontmatter, in `context/SKILL.md`.
+- **Content Priority framework** — Clear hierarchy for what to keep vs trim when context files grow large.
+- **Trigger Detection** — Recognizes signs that context is running low and prompts proactive saves.
+- **Composition Checklist** — Step-by-step verification when saving or loading context.
+- **Key Metrics** — Target limits for file size, active files, and index entries.
+
 ## Quick Start
 
-### 1. Copy to Your Project
+### Option A: Copy the Skill Directory (Recommended)
 
 ```bash
-# Copy the skill file
+# Copy the skill into your project's .claude/skills/
+cp -r context/ /your-project/.claude/skills/context/
+
+# Copy the context infrastructure
+cp -r .claude/context/ /your-project/.claude/context/
+cp -r .claude/rules/ /your-project/.claude/rules/
+```
+
+### Option B: Use the Standalone File
+
+```bash
+# Copy just the skill documentation
 cp contextskill.md /your-project/
 
-# Copy the rules and directory structure
-cp -r .claude /your-project/
+# Set up the directory structure
+mkdir -p /your-project/.claude/context/{active,archive}
+cp .claude/context/_index.md /your-project/.claude/context/
+cp -r .claude/rules/ /your-project/.claude/rules/
 ```
 
-### 2. Reference in CLAUDE.md
-
-Add to your project's `CLAUDE.md`:
-
-```markdown
-## Context Persistence System
-
-**On session start:**
-- Check `.claude/context/_index.md` for relevant prior context
-- If user mentions continuing work, load matching context file
-
-**When approaching context limits (~20% remaining):**
-- Use `contextskill.md` to save important session context
-- Focus on decisions, state, and continuation instructions
-
-**Context locations:**
-- Index: `.claude/context/_index.md`
-- Active: `.claude/context/active/`
-- Archive: `.claude/context/archive/`
-- Skill: `contextskill.md`
-```
-
-### 3. Use It
+### 2. Use It
 
 **Save context** when:
 - Approaching context window limits
@@ -72,27 +72,30 @@ Add to your project's `CLAUDE.md`:
 
 ```
 your-project/
-├── contextskill.md              # Main skill documentation
-├── CLAUDE.md                    # Reference the skill here
-└── .claude/
-    ├── context/
-    │   ├── _index.md            # Registry of all context files
-    │   ├── active/              # Recent context (0-7 days)
-    │   │   └── session-YYYY-MM-DD-topic.md
-    │   └── archive/             # Older context (7-30 days)
-    │       └── session-YYYY-MM-DD-topic.md
-    └── rules/
-        └── context-loading.md   # Auto-load behavior rules
+├── .claude/
+│   ├── skills/
+│   │   └── context/
+│   │       └── SKILL.md           # Skill with YAML frontmatter (recommended)
+│   ├── context/
+│   │   ├── _index.md              # Registry of all context files
+│   │   ├── active/                # Recent context (0-7 days)
+│   │   │   └── session-YYYY-MM-DD-topic.md
+│   │   └── archive/               # Older context (7-30 days)
+│   │       └── session-YYYY-MM-DD-topic.md
+│   └── rules/
+│       └── context-loading.md     # Auto-load behavior rules
+└── contextskill.md                # Standalone version (alternative)
 ```
 
 ## Key Features
 
+- **Active Plans Preservation**: Captures `.claude/plans/*.md` content before session end (plans are ephemeral)
 - **Topic Tags**: Every context file has searchable tags
 - **Priority Levels**: High/medium/low for continuation decisions
 - **Quick Search**: Index supports search by topic or modified files
-- **Cross-File Search**: Find and combine context from multiple files
 - **Size Management**: Guidelines for splitting large context files
 - **Archival Policy**: Clear rules for when to archive/delete
+- **Composition Checklist**: Verification steps for save/load quality
 
 ## Cross-File Context Search
 
@@ -118,18 +121,6 @@ You have context files from previous sessions:
 → Combines context from auth-refactor.md + database-migration.md
 ```
 
-### Example: Linking Related Work
-
-When saving context, link related files:
-
-```markdown
-## Related Context Files
-- `api-v2.md` - Related API changes
-- `database-migration.md` - Schema changes this depends on
-```
-
-Then later: `"Load auth-refactor and its related context"`
-
 ## Example Commands
 
 **Saving:**
@@ -148,13 +139,6 @@ Then later: `"Load auth-refactor and its related context"`
 "Continue from yesterday's session"
 ```
 
-**Combining:**
-```
-"Load context for both auth and caching"
-"Find all context related to the API refactor"
-"What sessions touched the database schema?"
-```
-
 **Managing:**
 ```
 "List all context files"
@@ -166,7 +150,8 @@ Then later: `"Load auth-refactor and its related context"`
 
 | File | Purpose |
 |------|---------|
-| `contextskill.md` | Complete skill documentation with templates |
+| `context/SKILL.md` | Skill with YAML frontmatter (for `.claude/skills/`) |
+| `contextskill.md` | Standalone skill documentation (alternative) |
 | `.claude/rules/context-loading.md` | Auto-load behavior rules |
 | `.claude/context/_index.md` | Example index file |
 | `.claude/context/active/session-example.md` | Example context file |
@@ -177,4 +162,4 @@ MIT License - See [LICENSE](LICENSE)
 
 ## Contributing
 
-Contributions welcome! This skill emerged from real usage patterns with Claude Code. If you have improvements or additional patterns that work well, please open an issue or PR.
+Contributions welcome! If you have improvements or additional patterns that work well, please open an issue or PR.

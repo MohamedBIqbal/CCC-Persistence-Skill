@@ -1,12 +1,16 @@
+---
+name: persisting-context
+description: Preserves conversation context across Claude Code sessions — save and load patterns, context compression, session handoff strategies. Use when starting a new session that needs prior context, saving progress mid-task, or designing context persistence for agent workflows.
+user-invocable: false
+---
+
 # Context Persistence Skill
 
-A skill for preserving conversation context across Claude Code sessions.
+Preserve conversation context across Claude Code sessions with inspectable, version-controlled files.
 
 ## Core Principle
 
 **"Save context before you lose it; load context before you need it."**
-
-This skill enables explicit context management - complementing (not replacing) Claude's built-in auto-memory with inspectable, version-controlled persistence.
 
 | Concern | Built-in Memory | This Skill |
 |---------|-----------------|------------|
@@ -63,6 +67,8 @@ This skill enables explicit context management - complementing (not replacing) C
 │       └── session-YYYY-MM-DD-topic.md
 ├── plans/                     # Ephemeral — Claude Code wipes between sessions
 │   └── *.md                   # Active plans (auto-generated names)
+├── skills/                    # Project skills
+│   └── */SKILL.md
 └── rules/
     └── context-loading.md     # Auto-load behavior
 ```
@@ -70,8 +76,6 @@ This skill enables explicit context management - complementing (not replacing) C
 ---
 
 ## Context File Template
-
-Use this structure when saving context:
 
 ```markdown
 ---
@@ -91,22 +95,18 @@ continuation_priority: high|medium|low
 
 | # | Decision | Rationale | Files Affected |
 |---|----------|-----------|----------------|
-| 1 | [What was decided] | [Why this choice] | [file1.py, file2.py] |
-| 2 | [What was decided] | [Why this choice] | [file3.tsx] |
+| 1 | [What was decided] | [Why this choice] | [file1.py] |
 
 ## Current State
 
 ### Completed
 - [x] Item that was finished
-- [x] Another completed item
 
 ### In Progress
 - [ ] Item being worked on
-- [ ] Another in-progress item
 
 ### Blocked / Needs Attention
 - Issue that needs resolution
-- Dependency that's missing
 
 ## Active Plans
 
@@ -114,45 +114,23 @@ continuation_priority: high|medium|low
 Claude Code deletes them between sessions. Without this section, plan context
 is lost on session restart.]
 
-### Plan: [plan-name-from-filename]
-```markdown
-[Full plan content — steps, checkboxes, status, notes]
-```
-
-## Important Code Patterns
-
-[Only include if there are non-obvious patterns worth remembering]
-
-```python
-# Example: Pattern name and purpose
-def example_function():
-    # Why this pattern matters
-    pass
-```
-
 ## Files to Review First
 
 When resuming, read these files in order:
 1. `/path/to/primary/file.py` - Core logic
-2. `/path/to/related/file.tsx` - UI component
-3. `/path/to/config.md` - Relevant configuration
 
 ## Continuation Instructions
 
 When resuming this work:
 1. [First thing to do or check]
 2. [Second priority action]
-3. [Any skill files to reference]
-
-## Related Context Files
-- `session-YYYY-MM-DD-related.md` - [relationship]
 ```
 
 ---
 
 ## Index File Format
 
-The index at `.claude/context/_index.md` follows this structure:
+Maintain at `.claude/context/_index.md`:
 
 ```markdown
 # Context Index
@@ -163,29 +141,25 @@ Last updated: YYYY-MM-DDTHH:MM:SS
 
 | File | Topic Tags | Priority | Created | Summary |
 |------|------------|----------|---------|---------|
-| `active/session-2026-03-09-feature.md` | feature, api, backend | high | 2026-03-09 | API implementation |
+| `active/session-YYYY-MM-DD-topic.md` | tag1, tag2 | high | YYYY-MM-DD | Brief summary |
 
 ## Archived Context Files
 
 | File | Topic Tags | Created | Summary |
 |------|------------|---------|---------|
-| `archive/session-2026-02-28-setup.md` | setup, config | 2026-02-28 | Initial project setup |
 
 ## Quick Search
 
 ### By Topic
-- **api**: session-2026-03-09-feature.md
-- **setup**: session-2026-02-28-setup.md
+- **tag1**: session-file1.md, session-file2.md
 
 ### By File Modified
-- `api.py`: session-2026-03-09-feature.md
+- `file.py`: session-file1.md
 ```
 
 ---
 
 ## Size Management
-
-### Limits
 
 | Constraint | Limit | Action When Exceeded |
 |------------|-------|----------------------|
@@ -193,28 +167,11 @@ Last updated: YYYY-MM-DDTHH:MM:SS
 | Total active context | 5 files | Archive oldest low-priority |
 | Index entries | 50 active | Archive entries >30 days |
 
-### Split Strategy
-
-When a session exceeds 500 lines:
-
-**Option 1 - Split by topic (preferred):**
-- `session-2026-03-09-feature-backend.md`
-- `session-2026-03-09-feature-frontend.md`
-
-**Option 2 - Split chronologically:**
-- `session-2026-03-09-feature-part1.md`
-- `session-2026-03-09-feature-part2.md`
-
-Link related files in "Related Context Files" section.
-
-### Content Priority (What to Keep vs Trim)
+### Content Priority
 
 | Priority | Content | Action |
 |----------|---------|--------|
-| Critical | Key decisions table | Always keep |
-| Critical | Active plans (`.claude/plans/`) | Always keep — ephemeral, lost on session end |
-| Critical | Continuation instructions | Always keep |
-| Critical | Files to review | Always keep |
+| Critical | Key decisions, active plans, continuation instructions, files to review | Always keep |
 | High | In-progress items | Keep if actionable |
 | Medium | Code patterns | Keep if unique/non-obvious |
 | Low | Completed items | Summarize, trim details |
@@ -229,26 +186,17 @@ Link related files in "Related Context Files" section.
 | 7-30 days | `archive/` | Move, keep in index |
 | >30 days | Delete | Unless `priority: high` |
 
-### Archival Checklist
-
-Before archiving:
-1. Check for unresolved in-progress items
-2. If unresolved: keep in active OR create new file with just those items
-3. Update `_index.md` to reflect new location
-4. Update Quick Search sections
-
 ---
 
-## Anti-Patterns to Avoid
+## Anti-Patterns
 
 | Anti-Pattern | Problem | Solution |
 |--------------|---------|----------|
-| **Context Dumping** | Saving everything makes files unreadable | Focus on decisions, patterns, next steps |
-| **Missing Continuation** | Next session starts from scratch | Always include continuation instructions |
-| **No Topic Tags** | Hard to find relevant context later | Tag with all relevant topics |
-| **Stale Context** | Outdated info misleads future sessions | Follow archival policy, check dates |
-| **Monolithic File** | Exceeds size limits, slow to load | Split at 500 lines by topic |
-| **External Links** | Links break, content unavailable | Embed all necessary content |
+| Context Dumping | Unreadable files | Focus on decisions, next steps |
+| Missing Continuation | Cold start next session | Always include continuation instructions |
+| No Topic Tags | Can't find context later | Tag with all relevant topics |
+| Stale Context | Misleads future sessions | Follow archival policy |
+| Monolithic File | Exceeds limits | Split at 500 lines by topic |
 
 ---
 
@@ -271,23 +219,20 @@ Before archiving:
 ## Integration Commands
 
 ### /save-context
-When user says "save context" or similar:
 1. Gather key decisions from conversation
 2. Identify files modified
 3. Note current state and next steps
-4. **Capture active plans**: Read all `.claude/plans/*.md` files and embed their full content into the context file's `## Active Plans` section (plans are ephemeral — Claude Code wipes them between sessions)
+4. **Capture active plans** from `.claude/plans/*.md`
 5. Create context file using template
 6. Update index
 
 ### /load-context [topic]
-When user wants to resume previous work:
-1. Read index file
+1. Read `.claude/context/_index.md`
 2. Find matches by topic tag
 3. Load most relevant context file
 4. Summarize continuation instructions to user
 
 ### /cleanup-context
-Periodic maintenance:
 1. List all context files with age and priority
 2. Recommend archival/deletion candidates
 3. Confirm with user before acting
@@ -297,17 +242,16 @@ Periodic maintenance:
 
 ## Composition Checklist
 
-### When Saving Context:
+### When Saving:
 - [ ] Summary captures current state accurately
 - [ ] Key decisions have rationale (not just what, but why)
 - [ ] **Active plans captured** from `.claude/plans/*.md` (they won't survive session end)
 - [ ] Topic tags cover all relevant areas
 - [ ] Files to review are in priority order
 - [ ] Continuation instructions are actionable
-- [ ] No external links (content embedded)
 - [ ] Under 500 lines
 
-### When Loading Context:
+### When Loading:
 - [ ] Checked index for matching topics
 - [ ] Read most recent/relevant file
 - [ ] Verified context still applicable (check dates)

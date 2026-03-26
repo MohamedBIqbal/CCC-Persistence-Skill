@@ -34,6 +34,14 @@ The session focused on implementing a new feature. Key decisions were made about
 ### Blocked / Needs Attention
 - Need to verify compatibility with existing module
 
+## Active Plans
+
+[Copy contents of any `.claude/plans/*.md` files here. Plans are ephemeral —
+Claude Code deletes them between sessions. Without this section, plan context
+is lost on session restart.]
+
+(no active plans in this example)
+
 ## Important Code Patterns
 
 ```python
