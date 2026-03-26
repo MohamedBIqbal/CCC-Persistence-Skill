@@ -63,8 +63,8 @@ This skill enables explicit context management - complementing (not replacing) C
 │       └── session-YYYY-MM-DD-topic.md
 ├── plans/                     # Ephemeral — Claude Code wipes between sessions
 │   └── *.md                   # Active plans (auto-generated names)
-└── rules/
-    └── context-loading.md     # Auto-load behavior
+└── skills/                    # Project skills
+    └── */SKILL.md
 ```
 
 ---
@@ -92,21 +92,17 @@ continuation_priority: high|medium|low
 | # | Decision | Rationale | Files Affected |
 |---|----------|-----------|----------------|
 | 1 | [What was decided] | [Why this choice] | [file1.py, file2.py] |
-| 2 | [What was decided] | [Why this choice] | [file3.tsx] |
 
 ## Current State
 
 ### Completed
 - [x] Item that was finished
-- [x] Another completed item
 
 ### In Progress
 - [ ] Item being worked on
-- [ ] Another in-progress item
 
 ### Blocked / Needs Attention
 - Issue that needs resolution
-- Dependency that's missing
 
 ## Active Plans
 
@@ -115,27 +111,13 @@ Claude Code deletes them between sessions. Without this section, plan context
 is lost on session restart.]
 
 ### Plan: [plan-name-from-filename]
-```markdown
 [Full plan content — steps, checkboxes, status, notes]
-```
-
-## Important Code Patterns
-
-[Only include if there are non-obvious patterns worth remembering]
-
-```python
-# Example: Pattern name and purpose
-def example_function():
-    # Why this pattern matters
-    pass
-```
 
 ## Files to Review First
 
 When resuming, read these files in order:
 1. `/path/to/primary/file.py` - Core logic
 2. `/path/to/related/file.tsx` - UI component
-3. `/path/to/config.md` - Relevant configuration
 
 ## Continuation Instructions
 
@@ -143,9 +125,6 @@ When resuming this work:
 1. [First thing to do or check]
 2. [Second priority action]
 3. [Any skill files to reference]
-
-## Related Context Files
-- `session-YYYY-MM-DD-related.md` - [relationship]
 ```
 
 ---
@@ -163,22 +142,21 @@ Last updated: YYYY-MM-DDTHH:MM:SS
 
 | File | Topic Tags | Priority | Created | Summary |
 |------|------------|----------|---------|---------|
-| `active/session-2026-03-09-feature.md` | feature, api, backend | high | 2026-03-09 | API implementation |
+| `active/session-YYYY-MM-DD-topic.md` | tag1, tag2 | high | YYYY-MM-DD | Brief summary |
 
 ## Archived Context Files
 
 | File | Topic Tags | Created | Summary |
 |------|------------|---------|---------|
-| `archive/session-2026-02-28-setup.md` | setup, config | 2026-02-28 | Initial project setup |
+| `archive/session-YYYY-MM-DD-topic.md` | tag1 | YYYY-MM-DD | Brief summary |
 
 ## Quick Search
 
 ### By Topic
-- **api**: session-2026-03-09-feature.md
-- **setup**: session-2026-02-28-setup.md
+- **tag1**: session-file1.md, session-file2.md
 
 ### By File Modified
-- `api.py`: session-2026-03-09-feature.md
+- `file.py`: session-file1.md
 ```
 
 ---
@@ -198,12 +176,12 @@ Last updated: YYYY-MM-DDTHH:MM:SS
 When a session exceeds 500 lines:
 
 **Option 1 - Split by topic (preferred):**
-- `session-2026-03-09-feature-backend.md`
-- `session-2026-03-09-feature-frontend.md`
+- `session-YYYY-MM-DD-topic-backend.md`
+- `session-YYYY-MM-DD-topic-frontend.md`
 
 **Option 2 - Split chronologically:**
-- `session-2026-03-09-feature-part1.md`
-- `session-2026-03-09-feature-part2.md`
+- `session-YYYY-MM-DD-topic-part1.md`
+- `session-YYYY-MM-DD-topic-part2.md`
 
 Link related files in "Related Context Files" section.
 
@@ -248,7 +226,6 @@ Before archiving:
 | **No Topic Tags** | Hard to find relevant context later | Tag with all relevant topics |
 | **Stale Context** | Outdated info misleads future sessions | Follow archival policy, check dates |
 | **Monolithic File** | Exceeds size limits, slow to load | Split at 500 lines by topic |
-| **External Links** | Links break, content unavailable | Embed all necessary content |
 
 ---
 
@@ -304,7 +281,6 @@ Periodic maintenance:
 - [ ] Topic tags cover all relevant areas
 - [ ] Files to review are in priority order
 - [ ] Continuation instructions are actionable
-- [ ] No external links (content embedded)
 - [ ] Under 500 lines
 
 ### When Loading Context:

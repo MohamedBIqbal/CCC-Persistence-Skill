@@ -21,14 +21,17 @@ Claude Code has built-in memory, but it's opaque. This skill gives you **visible
 | Versioning | None | Git-tracked |
 | Searchability | Limited | Topic tags, file index |
 
-## What's New in v2
+## What's New in v3
 
-- **Active Plans preservation** — `.claude/plans/*.md` files are ephemeral (Claude Code wipes them between sessions). The skill now captures plan content into context files so plans survive session restarts.
-- **Proper SKILL.md format** — Follows Anthropic's official skill conventions with YAML frontmatter, in `context/SKILL.md`.
-- **Content Priority framework** — Clear hierarchy for what to keep vs trim when context files grow large.
-- **Trigger Detection** — Recognizes signs that context is running low and prompts proactive saves.
-- **Composition Checklist** — Step-by-step verification when saving or loading context.
-- **Key Metrics** — Target limits for file size, active files, and index entries.
+- **Compressed description** — Shorter description for better context budget at scale (25+ skills).
+- **Split Strategy** — Guidance for splitting large context files by topic or chronologically.
+- **Archival Checklist** — Step-by-step verification before archiving context files (check for unresolved items).
+- **Improved template** — Leaner template with plan embedding pattern and generic date placeholders.
+- **Synced SKILL.md and standalone** — Both versions now have identical content.
+
+### v2 (previous)
+
+- Active Plans preservation, proper SKILL.md format, Content Priority framework, Trigger Detection, Composition Checklist, Key Metrics.
 
 ## Quick Start
 
